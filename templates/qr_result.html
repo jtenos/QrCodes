@@ -1,0 +1,56 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Generated QR Code</h5>
+    </div>
+    <div class="card-body text-center">
+        <p class="text-muted">{{.Name}} - {{.User}}</p>
+        <img id="qr-image" src="data:image/png;base64,{{.Base64Image}}" alt="TOTP QR Code" class="img-fluid mb-3" style="max-width: 256px;">
+        <div class="d-grid gap-2 d-md-flex justify-content-center">
+            <button class="btn btn-success" onclick="downloadQRCode('{{.Name}}_{{.User}}.png')">
+                Download
+            </button>
+            <button class="btn btn-info" onclick="copyToClipboard()">
+                Copy to Clipboard
+            </button>
+        </div>
+        <div id="copy-status" class="mt-2"></div>
+    </div>
+</div>
+
+<script>
+function downloadQRCode(filename) {
+    const img = document.getElementById('qr-image');
+    const link = document.createElement('a');
+    link.href = img.src;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+async function copyToClipboard() {
+    const img = document.getElementById('qr-image');
+    const statusDiv = document.getElementById('copy-status');
+    
+    try {
+        // Fetch the image as a blob
+        const response = await fetch(img.src);
+        const blob = await response.blob();
+        
+        // Use the Clipboard API to copy
+        await navigator.clipboard.write([
+            new ClipboardItem({
+                [blob.type]: blob
+            })
+        ]);
+        
+        statusDiv.innerHTML = '<span class="text-success">Image copied to clipboard!</span>';
+        setTimeout(() => {
+            statusDiv.innerHTML = '';
+        }, 3000);
+    } catch (err) {
+        statusDiv.innerHTML = '<span class="text-danger">Failed to copy. Please try downloading instead.</span>';
+        console.error('Failed to copy:', err);
+    }
+}
+</script>

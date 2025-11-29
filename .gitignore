@@ -1,0 +1,10 @@
+# Binaries
+qrcodes
+*.exe
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

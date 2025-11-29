@@ -130,34 +130,37 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function parseQRData(data) {
-    // Try to parse as URL
-    try {
-      const url = new URL(data);
-      const parsed = { Type: 'URL' };
-      parsed['Protocol'] = url.protocol.replace(':', '');
-      parsed['Host'] = url.host;
-      if (url.pathname && url.pathname !== '/') {
-        parsed['Path'] = url.pathname;
-      }
-      if (url.search) {
-        parsed['Query'] = url.search;
-      }
-      if (url.hash) {
-        parsed['Hash'] = url.hash;
-      }
-      return parsed;
-    } catch (e) {
-      // Not a valid URL
-    }
-
-    // Try to parse as vCard
+    // Try to parse as vCard first (before URL check)
     if (data.startsWith('BEGIN:VCARD')) {
       return parseVCard(data);
     }
 
-    // Try to parse as WiFi configuration
+    // Try to parse as WiFi configuration (before URL check)
     if (data.startsWith('WIFI:')) {
       return parseWiFi(data);
+    }
+
+    // Try to parse as URL (only for http/https URLs)
+    try {
+      const url = new URL(data);
+      // Only treat as URL if it has a standard web protocol
+      if (url.protocol === 'http:' || url.protocol === 'https:') {
+        const parsed = { Type: 'URL' };
+        parsed['Protocol'] = url.protocol.replace(':', '');
+        parsed['Host'] = url.host;
+        if (url.pathname && url.pathname !== '/') {
+          parsed['Path'] = url.pathname;
+        }
+        if (url.search) {
+          parsed['Query'] = url.search;
+        }
+        if (url.hash) {
+          parsed['Hash'] = url.hash;
+        }
+        return parsed;
+      }
+    } catch (e) {
+      // Not a valid URL
     }
 
     // Try to parse as phone number

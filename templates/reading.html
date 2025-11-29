@@ -6,6 +6,24 @@
     <title>Read QR Code - QR Codes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .upload-area:hover {
+            border-color: #0d6efd;
+            background-color: #f8f9ff;
+        }
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -16,10 +34,30 @@
 
     <div class="container mt-4">
         <h1 class="mb-4">Read QR Code</h1>
-        <div class="alert alert-info">
-            <strong>Coming Soon!</strong> This feature will be added in a future update.
+        <p class="text-muted">Upload an image containing a QR code to read its content.</p>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <form hx-post="/read-qr" hx-target="#qr-result" hx-swap="innerHTML" hx-encoding="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="qr_image" class="upload-area d-block">
+                            <div class="upload-icon">📷</div>
+                            <div>Click to upload an image with a QR code</div>
+                            <small class="text-muted">Supported formats: PNG, JPG, WEBP, BMP, GIF</small>
+                        </label>
+                        <input type="file" class="form-control d-none" id="qr_image" name="qr_image" 
+                               accept="image/png,image/jpeg,image/webp,image/bmp,image/gif" required
+                               onchange="document.getElementById('selected-file').textContent = this.files[0]?.name || 'No file selected'">
+                        <div id="selected-file" class="mt-2 text-muted small"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Read QR Code</button>
+                    <a href="/" class="btn btn-secondary ms-2">Back to Home</a>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <div id="qr-result"></div>
+            </div>
         </div>
-        <a href="/" class="btn btn-secondary">Back to Home</a>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

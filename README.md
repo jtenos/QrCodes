@@ -12,7 +12,7 @@ QR Code Reader and Writer - A Go web application for generating TOTP QR codes.
 
 ## Requirements
 
-- Go 1.21 or later
+- Go 1.24 or later
 
 ## Running the Application
 

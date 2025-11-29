@@ -36,15 +36,24 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	templates.ExecuteTemplate(w, "home.html", nil)
+	if err := templates.ExecuteTemplate(w, "home.html", nil); err != nil {
+		log.Printf("Error executing home template: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+	}
 }
 
 func generateHandler(w http.ResponseWriter, r *http.Request) {
-	templates.ExecuteTemplate(w, "generate.html", nil)
+	if err := templates.ExecuteTemplate(w, "generate.html", nil); err != nil {
+		log.Printf("Error executing generate template: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+	}
 }
 
 func readingHandler(w http.ResponseWriter, r *http.Request) {
-	templates.ExecuteTemplate(w, "reading.html", nil)
+	if err := templates.ExecuteTemplate(w, "reading.html", nil); err != nil {
+		log.Printf("Error executing reading template: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+	}
 }
 
 func generateQRHandler(w http.ResponseWriter, r *http.Request) {
@@ -107,5 +116,8 @@ func generateQRHandler(w http.ResponseWriter, r *http.Request) {
 		Base64Image: base64Image,
 	}
 
-	templates.ExecuteTemplate(w, "qr_result.html", data)
+	if err := templates.ExecuteTemplate(w, "qr_result.html", data); err != nil {
+		log.Printf("Error executing qr_result template: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+	}
 }

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Reader</title>
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="navigation">
+      <a href="/" class="nav-link">Generate QR Code</a>
+      <a href="/reader.html" class="nav-link active">Read QR Code</a>
+    </nav>
+    
+    <main>
+      <h1>QR Code Reader</h1>
+      
+      <div class="upload-section">
+        <label for="qr-upload" class="upload-label">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">Click to upload an image with a QR code</div>
+          <div class="upload-formats">Supported formats: PNG, JPG, WEBP, BMP, GIF, HEIC</div>
+        </label>
+        <input type="file" id="qr-upload" accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/heic,.heic" hidden>
+      </div>
+      
+      <div id="image-preview" class="image-preview hidden">
+        <h2>Uploaded Image</h2>
+        <img id="preview-img" alt="Uploaded QR code image">
+      </div>
+      
+      <div id="reader-result" class="reader-result hidden">
+        <h2>QR Code Content</h2>
+        
+        <div class="result-section">
+          <h3>Raw Text</h3>
+          <pre id="raw-text" class="raw-text"></pre>
+          <button id="copy-btn" class="btn secondary">Copy to Clipboard</button>
+        </div>
+        
+        <div id="parsed-values" class="result-section hidden">
+          <h3>Parsed Values</h3>
+          <div id="parsed-content"></div>
+        </div>
+        
+        <div class="action-section">
+          <a id="generator-link" href="/" class="btn primary">Generate QR Code with this content</a>
+        </div>
+      </div>
+      
+      <div id="error-message" class="error-message hidden"></div>
+    </main>
+  </div>
+  
+  <script type="module" src="/src/reader.js"></script>
+</body>
+</html>

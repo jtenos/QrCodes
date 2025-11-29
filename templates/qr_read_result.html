@@ -1,0 +1,51 @@
+{{if .Error}}
+<div class="alert alert-danger">
+    <strong>Error:</strong> {{.Error}}
+</div>
+{{if .Base64Image}}
+<div class="card mt-3">
+    <div class="card-header">Uploaded Image</div>
+    <div class="card-body text-center">
+        <img src="data:image/png;base64,{{.Base64Image}}" alt="Uploaded QR code image" class="img-fluid" style="max-height: 200px;">
+    </div>
+</div>
+{{end}}
+{{else}}
+<div class="card mb-3">
+    <div class="card-header">Uploaded Image</div>
+    <div class="card-body text-center">
+        <img src="data:image/png;base64,{{.Base64Image}}" alt="Uploaded QR code image" class="img-fluid" style="max-height: 200px;">
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header">QR Code Content</div>
+    <div class="card-body">
+        <h6>Raw Text</h6>
+        <pre class="bg-light p-3 rounded" style="white-space: pre-wrap; word-break: break-all;">{{.RawText}}</pre>
+        <button class="btn btn-sm btn-secondary" onclick="navigator.clipboard.writeText('{{.RawText}}').then(() => { this.textContent = 'Copied!'; setTimeout(() => this.textContent = 'Copy to Clipboard', 2000); })">Copy to Clipboard</button>
+    </div>
+</div>
+
+{{if .ParsedValues}}
+<div class="card mb-3">
+    <div class="card-header">Parsed Values</div>
+    <div class="card-body">
+        <table class="table table-sm">
+            <tbody>
+                {{range .ParsedValues}}
+                <tr>
+                    <td class="fw-bold" style="width: 40%;">{{.Key}}</td>
+                    <td>{{.Value}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}
+
+<div class="text-center">
+    <a href="{{.GenerateLink}}" class="btn btn-primary">Generate QR Code with this content</a>
+</div>
+{{end}}

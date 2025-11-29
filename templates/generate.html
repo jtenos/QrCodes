@@ -23,19 +23,19 @@
                 <form hx-post="/generate-qr" hx-target="#qr-result" hx-swap="innerHTML">
                     <div class="mb-3">
                         <label for="name" class="form-label">Name (Issuer)</label>
-                        <input type="text" class="form-control" id="name" name="name" required placeholder="e.g., MyApp">
+                        <input type="text" class="form-control" id="name" name="name" required placeholder="e.g., MyApp" value="{{.Name}}">
                     </div>
                     <div class="mb-3">
                         <label for="user" class="form-label">User (Account)</label>
-                        <input type="text" class="form-control" id="user" name="user" required placeholder="e.g., user@example.com">
+                        <input type="text" class="form-control" id="user" name="user" required placeholder="e.g., user@example.com" value="{{.User}}">
                     </div>
                     <div class="mb-3">
                         <label for="secret" class="form-label">Secret</label>
-                        <input type="text" class="form-control" id="secret" name="secret" required placeholder="Base32 encoded secret">
+                        <input type="text" class="form-control" id="secret" name="secret" required placeholder="Base32 encoded secret" value="{{.Secret}}">
                     </div>
                     <div class="mb-3">
                         <label for="period" class="form-label">Time Period (seconds)</label>
-                        <input type="number" class="form-control" id="period" name="period" value="30" min="1" placeholder="30">
+                        <input type="number" class="form-control" id="period" name="period" value="{{.Period}}" min="1" placeholder="30">
                     </div>
                     <button type="submit" class="btn btn-primary">Generate QR Code</button>
                     <a href="/" class="btn btn-secondary ms-2">Back to Home</a>

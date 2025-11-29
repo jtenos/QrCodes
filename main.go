@@ -55,7 +55,42 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func generateHandler(w http.ResponseWriter, r *http.Request) {
-	if err := templates.ExecuteTemplate(w, "generate.html", nil); err != nil {
+	data := struct {
+		Name   string
+		User   string
+		Secret string
+		Period string
+	}{
+		Period: "30", // default value
+	}
+
+	// Parse text parameter if present
+	text := r.URL.Query().Get("text")
+	if text != "" {
+		// Parse TOTP URI format: otpauth://totp/ISSUER:ACCOUNT?secret=SECRET&issuer=ISSUER&period=PERIOD
+		if strings.HasPrefix(text, "otpauth://totp/") {
+			parsedURL, err := url.Parse(text)
+			if err == nil {
+				// Extract issuer and account from path (format: ISSUER:ACCOUNT)
+				path := strings.TrimPrefix(parsedURL.Path, "/")
+				if idx := strings.Index(path, ":"); idx != -1 {
+					data.Name, _ = url.PathUnescape(path[:idx])
+					data.User, _ = url.PathUnescape(path[idx+1:])
+				}
+
+				// Extract query parameters
+				params := parsedURL.Query()
+				if secret := params.Get("secret"); secret != "" {
+					data.Secret = secret
+				}
+				if period := params.Get("period"); period != "" {
+					data.Period = period
+				}
+			}
+		}
+	}
+
+	if err := templates.ExecuteTemplate(w, "generate.html", data); err != nil {
 		log.Printf("Error executing generate template: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}

@@ -15,9 +15,11 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/makiuchi-d/gozxing"
 	"github.com/makiuchi-d/gozxing/qrcode"
+	"github.com/pquerna/otp/totp"
 	goqrcode "github.com/skip2/go-qrcode"
 	_ "golang.org/x/image/bmp"
 	_ "golang.org/x/image/webp"
@@ -37,6 +39,7 @@ func main() {
 	http.HandleFunc("/generate-qr", generateQRHandler)
 	http.HandleFunc("/reading", readingHandler)
 	http.HandleFunc("/read-qr", readQRHandler)
+	http.HandleFunc("/get-code", getCodeHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	fmt.Println("Server starting on http://localhost:8080")
@@ -398,4 +401,32 @@ func parseQRContent(data string) ([]ParsedValue, string) {
 
 	// Plain text (no specific format detected)
 	return nil, "text"
+}
+
+func getCodeHandler(w http.ResponseWriter, r *http.Request) {
+	secret := r.URL.Query().Get("secret")
+	if secret == "" {
+		w.Write([]byte("secret parameter is required"))
+		return
+	}
+	code, err := getCode(secret)
+	if err != nil {
+		w.Write([]byte("error generating code: " + err.Error()))
+		return
+	}
+	fmt.Fprint(w, code)
+}
+
+func getCode(secret string) (string, error) {
+	code, err := totp.GenerateCode(secret, time.Now())
+	if err != nil {
+		return "", fmt.Errorf("error generating code: %v", err)
+	}
+
+	period := 30 * time.Second
+	epochTime := time.Now().Unix()
+	secondsIntoPeriod := epochTime % int64(period.Seconds())
+	secondsRemaining := int64(period.Seconds()) - secondsIntoPeriod
+
+	return fmt.Sprintf("Code: %s | %d seconds remaining", code, secondsRemaining), nil
 }
